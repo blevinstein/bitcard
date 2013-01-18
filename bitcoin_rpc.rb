@@ -30,9 +30,9 @@ class BitcoinRPC
 end
 
 if $0 == __FILE__
+  # bitcoind REPL
   user = 'bitcoinrpc'
   pass = 'be3189b6-242e-49d5-af91-1c94463dd903'
-  #host = '127.0.0.1'
   host = '10.0.0.2'
   port = 8332
   rpc = BitcoinRPC.new("http://#{user}:#{pass}@#{host}:#{port}")
@@ -40,18 +40,19 @@ if $0 == __FILE__
     print '> '
     command = gets.split.map do |arg|
       case arg
-      when /true/i
+      when /^true$/i
         true
-      when /false/i
+      when /^false$/i
         false
-      when /-?\d+/
+      when /^-?\d+$/
         arg.to_i
-      when /-?\d*\.\d+/
+      when /^-?\d*\.\d+$/
         arg.to_f
       else
         arg
       end
     end
+    break if command.empty?
     pp rpc.send(*command)
   end
 end
