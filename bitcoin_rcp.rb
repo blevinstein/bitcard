@@ -1,6 +1,7 @@
 require 'net/http'
 require 'uri'
 require 'json'
+require 'pp'
 
 class BitcoinRPC
   def initialize(service_url)
@@ -31,8 +32,27 @@ end
 if $0 == __FILE__
   user = 'bitcoinrpc'
   pass = 'be3189b6-242e-49d5-af91-1c94463dd903'
-  rpc = BitcoinRPC.new("http://#{user}:#{pass}@127.0.0.1:8332")
-  p rpc.getbalance
-  p rpc.getinfo
+  #host = '127.0.0.1'
+  host = '10.0.0.2'
+  port = 8332
+  rpc = BitcoinRPC.new("http://#{user}:#{pass}@#{host}:#{port}")
+  while true
+    print '> '
+    command = gets.split.map do |arg|
+      case arg
+      when /true/i
+        true
+      when /false/i
+        false
+      when /-?\d+/
+        arg.to_i
+      when /-?\d*\.\d+/
+        arg.to_f
+      else
+        arg
+      end
+    end
+    pp rpc.send(*command)
+  end
 end
 
