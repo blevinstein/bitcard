@@ -1,5 +1,10 @@
 $(document).ready(function() {
   addCode();
+  $('.send').click(function(event) {
+    var form = $(event.target).parents('form');
+    form.find('input').removeAttr('disabled');
+    return true;
+  });
 });
 
 function template(type) {

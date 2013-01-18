@@ -10,6 +10,8 @@ class Bitcard < Sinatra::Base
   set :port, 8080
   set :environment, $environment
   set :public_folder, 'public'
+  set :raise_errors, false
+  set :show_exceptions, false
   enable :sessions
 
   set :haml, :layout => :template
@@ -26,6 +28,10 @@ class Bitcard < Sinatra::Base
     else
       {:success => false}
     end.to_json
+  end
+
+  get '/admin' do
+    haml :admin
   end
 
   post '/send' do
