@@ -1,3 +1,5 @@
+- require 'securerandom'
+
 - content_for :head do
   = stylesheet 'css/admin.css'
   %script{:src=>'js/admin.sj'}
@@ -5,3 +7,16 @@
   Admin Panel
 
 .row-fluid
+  .span4.offset2.well
+    %h3 Receiving Addresses
+    - 5.times do
+      .row-fluid
+        .span9= SecureRandom.uuid
+        .span3= "#{rand(1..10)}&#3647;"
+  .span4.well
+    %h3 Codes
+    - 4.times do
+      .row-fluid
+        .span4= SecureRandom.uuid[0,8]
+        .span4= "#{rand(1..10)}&#3647;"
+        .span4= %w[ready printed sold].sample
