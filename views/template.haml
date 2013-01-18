@@ -1,18 +1,21 @@
 !!! 5
 %head
   %title Bitcard
+  -# jquery
+  %script{:src=>'js/jquery-1.9.0.js'}
+  -# bootstrap
   = stylesheet 'css/bootstrap.css'
-  -#= stylesheet 'css/bootstrap-responsive.css'
-  = stylesheet 'css/template.css'
-  %script{:src=>'js/jquery.js'}
   %script{:src=>'js/bootstrap.js'}
+  -# local stylesheets
+  = stylesheet 'css/template.css'
   = yield_content :head
 %body
   .container-fluid
     .row-fluid.header
       .span3.offset1
         .logo
-          %img{:src=>'img/logo.png'}
+          %a{:href=>'/'}
+            %img{:src=>'img/logo.png'}
       .span6
         .title
           %h1= yield_content :title
