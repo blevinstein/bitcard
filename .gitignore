@@ -2,3 +2,4 @@
 db
 Gemfile.lock
 log
+config.yml
