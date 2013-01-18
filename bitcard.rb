@@ -2,6 +2,8 @@ require 'sinatra/base'
 require 'sinatra/contrib'
 require 'sinatra/config_file'
 
+require 'logger'
+
 require 'haml'
 require 'json'
 
@@ -12,14 +14,34 @@ class Bitcard < Sinatra::Base
   register Sinatra::ConfigFile
   config_file 'config.yml'
   set :port, 8080
-  set :environment, settings.environment
+  set :environment, $environment
   set :public_folder, 'public'
   set :raise_errors, false
   set :show_exceptions, false
-  enable :sessions
+  enable :sessions, :logging
+  # TODO: Add logging messages
 
   set :haml, :layout => :template
   register Sinatra::Contrib
+
+  get '/' do
+    haml :index
+  end
+
+  get '/code/:id' do
+    code = Code.get(params[:id])
+    if code
+      logger << "Code verified: #{params[:id]}\n"
+      {:success => true, :amount => code.amount}
+    else
+      logger << "Code failed: #{params[:id]}\n"
+      {:success => false}
+    end.to_json
+  end
+
+  post '/send' do
+    params.to_json
+  end
 
   def require_admin
     redirect '/login' unless session[:admin]
@@ -43,26 +65,9 @@ class Bitcard < Sinatra::Base
     end
   end
 
-  get '/' do
-    haml :index
-  end
-
-  get '/code/:id' do
-    code = Code.get(params[:id])
-    if code
-      {:success => true, :amount => code.amount}
-    else
-      {:success => false}
-    end.to_json
-  end
-
   get '/admin' do
     require_admin
     haml :admin
-  end
-
-  post '/send' do
-    params.to_json
   end
 
   def rpc
