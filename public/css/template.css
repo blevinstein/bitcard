@@ -21,6 +21,7 @@ html, body, .container-fluid {
 
 .title {
   color: gray;
+  text-align: center;
 }
 
 .hidden {

@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  addCode();
+  addCode().find('input').focus();
   $('.send').click(function(event) {
     var form = $(event.target).parents('form');
     form.find('input').removeAttr('disabled');
@@ -37,14 +37,15 @@ function addCode() {
   button.addClass('btn-primary').click(function(event) {
     if(getCode(id) == "")
       return false;
-    addCode();
+    if(!validateCode(id))
+      return false;
+    addCode().find('input').focus();
     var button = $(event.target);
     button.off('click');
-    button.click(function() { validateCode(id); return false; });
-    button.click();
     return false;
   });
   $('#codes').prepend(html);
+  return html;
 }
 
 function getCodeStatus(code) {
@@ -87,10 +88,12 @@ function validateCode(id) {
     html.find('input').attr('id','appendedPrependedInputButton');
     html.find('.input-append').addClass('input-prepend');
     html.find('.amount').removeClass('hidden').html(status.amount + '\u0e3f');
+    return true;
   } else {
     // failure
     html.find('i').attr('class','icon-remove');
     html.find('button').addClass('btn-danger');
     html.find('.control-group').addClass('error');
+    return false;
   }
 }
