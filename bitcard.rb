@@ -41,7 +41,7 @@ class Bitcard < Sinatra::Base
   end
 
   post '/redeem' do
-    @codes = params['code'].map{|k,v| Code.get(v)}.reject(&:nil?)
+    @codes = params['code'].map{|k,v| Code.get(v)}.reject(&:nil?).uniq
     @total = @codes.map{|code| code.amount}.inject(:+) || 0
     haml :redeem
   end
