@@ -1,0 +1,21 @@
+- content_for :head do
+  = stylesheet 'css/index.css'
+  %script{:src=>'js/index.js'}
+
+.row-fluid
+  .offset4.span4
+    .row-fluid
+      .span8.offset2
+        %button.btn.btn-info.send Send Bitcoins
+    %form.form{:method=>'post', :action=>'send'}
+      #codes
+
+#code.template
+  .control-group
+    .row-fluid
+      .input-append
+        %span.amount.add-on.hidden
+        %input.span10.offset1#appendedInputButton{:type=>'text',
+                                   :placeholder=>'Bitcard Code'}
+        %button.btn
+          %i.icon-file

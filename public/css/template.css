@@ -1,0 +1,28 @@
+html, body, .container-fluid {
+  height: 100%;
+}
+
+.container-fluid {
+  background: lightGray;
+}
+
+.header {
+  margin: 20px 0;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+}
+
+.template {
+  display: none;
+}
+
+.title {
+  color: gray;
+}
+
+.hidden {
+  visibility: hidden;
+}
