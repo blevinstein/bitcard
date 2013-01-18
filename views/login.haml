@@ -1,0 +1,20 @@
+- content_for :head do
+  = stylesheet 'css/admin.css'
+  %script{:src=>'js/admin.js'}
+- content_for :title do
+  Admin Login
+
+.row-fluid
+  .span4.offset4.well
+    %form.form-horizontal{:action=>'/login',:method=>'post'}
+      .control-group
+        %label.control-label Username
+        .controls
+          %input{:type=>'text',:name=>'username'}
+      .control-group
+        %label.control-label Password
+        .controls
+          %input{:type=>'password',:name=>'password'}
+      .control-group
+        .controls
+          %input.btn.btn-success{:type=>'submit',:value=>'Login'}

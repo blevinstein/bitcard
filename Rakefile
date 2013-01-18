@@ -8,8 +8,18 @@ namespace 'db' do
 end
 
 namespace 'admin' do
-  # create admin
-  # list admins
+  desc "List all admins."
+  task :list do
+    Admin.each do |admin|
+      puts admin.username
+    end
+  end
+
+  desc "Add an admin account."
+  task :add, :username, :password do |t, args|
+    admin = Admin.create(args)
+    puts 'Admin account created!'
+  end
 end
 
 namespace 'code' do

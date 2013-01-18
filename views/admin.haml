@@ -2,7 +2,7 @@
 
 - content_for :head do
   = stylesheet 'css/admin.css'
-  %script{:src=>'js/admin.sj'}
+  %script{:src=>'js/admin.js'}
 - content_for :title do
   Admin Panel
 
@@ -20,3 +20,6 @@
         .span4= SecureRandom.uuid[0,8]
         .span4= "#{rand(1..10)}&#3647;"
         .span4= %w[ready printed sold].sample
+.row-fluid
+  .span4.offset2.well
+    = rpc.getbalance
