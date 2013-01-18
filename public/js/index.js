@@ -5,6 +5,8 @@ $(document).ready(function() {
     form.find('input').removeAttr('disabled');
     return true;
   });
+  // TODO: sinatra-minify
+  // TODO: get modal working
 });
 
 function template(type) {
