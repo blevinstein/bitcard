@@ -1,0 +1,19 @@
+- content_for :head do
+  = stylesheet 'css/redeem.css'
+- content_for :title do
+  Send Bitcoins
+
+.row-fluid
+  .offset4.span4.well
+    %form.form{:method=>'post', :action=>'send'}
+      .row-fluid
+        .span8.offset2
+          %button.btn.btn-info.submit Send Bitcoins
+      .row-fluid
+        .control-group.success
+          .input-append.input-prepend
+            %span.amount.add-on= "#{@total}&#3647;"
+            %input.span10.offset1#prependedAppendedInputButton{:type=>'text',
+                                                               :placeholder=>'Bitcoin Address'}
+            %button.btn.btn-warning
+              %i.icon-share

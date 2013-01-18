@@ -6,6 +6,7 @@ require 'logger'
 
 require 'haml'
 require 'json'
+require 'pp'
 
 require './config.rb'
 require './bitcoin_rpc.rb'
@@ -17,7 +18,7 @@ class Bitcard < Sinatra::Base
   set :environment, $environment
   set :public_folder, 'public'
   set :raise_errors, false
-  set :show_exceptions, false
+  set :show_exceptions, true
   enable :sessions, :logging
   # TODO: Add logging messages
 
@@ -39,8 +40,10 @@ class Bitcard < Sinatra::Base
     end.to_json
   end
 
-  post '/send' do
-    params.to_json
+  post '/redeem' do
+    @codes = params['code'].map{|k,v| Code.get(v)}.reject(&:nil?)
+    @total = @codes.map{|code| code.amount}.inject(:+) || 0
+    haml :redeem
   end
 
   def require_admin

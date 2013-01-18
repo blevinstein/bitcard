@@ -1,6 +1,6 @@
 $(document).ready(function() {
   addCode().find('input').focus();
-  $('.send').click(function(event) {
+  $('.submit').click(function(event) {
     var form = $(event.target).parents('form');
     form.find('input').removeAttr('disabled');
     return true;
