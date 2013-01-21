@@ -1,23 +1,23 @@
 - content_for :head do
   = stylesheet 'css/index.css'
-  %script{:src=>'js/index.js'}
 - content_for :title do
-  Redeem Bitcards
+  = @title
 
 .row-fluid
   .offset4.span4.well
-    %form.form{:method=>'post', :action=>'redeem'}
+    %form.form{:method=>'post', :action=>@action.to_form}
       .row-fluid
-        .span8.offset2
-          %button.btn.btn-info.submit Redeem Bitcards
-      #codes
-
-#code.template
-  .control-group
-    .row-fluid
-      .input-append
-        %span.amount.add-on.hidden
-        %input.span10.offset1#appendedInputButton{:type=>'text',
-                                                  :placeholder=>'Bitcard Code'}
-        %button.btn
-          %i.icon-file
+        .span10.offset1.control-group{:class=>@status}
+          %label.control-label.message= @message || "&nbsp;"
+      .row-fluid
+        .span6.offset3
+          %button.btn.btn-primary.submit= @action.to_human
+      .row-fluid
+        .control-group{:class=>@status}
+          .input-append{:class=>@prepend ? 'input-prepend' : nil}
+            %span.add-on{:class=>@prepend ? nil : 'hidden'}= @prepend || "&nbsp;"
+            %input.span10.offset1#appendedInputButton{:type=>'text',
+              :name=>@input.to_form,
+              :placeholder=>@input.to_human}
+            %button.btn{:class=>"btn-#{@button}"}
+              %i{:class=>"icon-#{@icon}"}

@@ -8,6 +8,7 @@ require 'haml'
 require 'json'
 require 'pp'
 
+require './string.rb'
 require './config.rb'
 require './bitcoin_rpc.rb'
 
@@ -26,24 +27,36 @@ class Bitcard < Sinatra::Base
   register Sinatra::Contrib
 
   get '/' do
+    @title = 'Redeem Bitcards'
+    @action = 'Redeem'
+    @input = 'Bitcard Code'
+    @button = 'success'
+    @icon = 'ok'
     haml :index
   end
 
-  get '/code/:id' do
-    code = Code.get(params[:id])
-    if code
-      logger << "Code verified: #{params[:id]}\n"
-      {:success => true, :amount => code.amount}
-    else
-      logger << "Code failed: #{params[:id]}\n"
-      {:success => false}
-    end.to_json
-  end
-
   post '/redeem' do
-    @codes = params['code'].map{|k,v| Code.get(v)}.reject(&:nil?).uniq
-    @total = @codes.map{|code| code.amount}.inject(:+) || 0
-    haml :redeem
+    @id = params['bitcard_code']
+    @code = Code.get(@id)
+    if @code
+      @title = 'Send Bitcoins'
+      @action = 'Send'
+      @input = 'Bitcoin Address'
+      @button = 'success'
+      @icon = 'share'
+      @status = 'success'
+      @message = 'Valid code!'
+      @prepend = "#{@code.amount} &#3647;"
+    else
+      @message = 'No such code.'
+      @title = 'Redeem Bitcards'
+      @action = 'Redeem'
+      @input = 'Bitcard Code'
+      @status = 'error'
+      @button = 'danger'
+      @icon = 'ok'
+    end
+    haml :index
   end
 
   def require_admin
