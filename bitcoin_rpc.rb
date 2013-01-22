@@ -1,7 +1,7 @@
 require 'net/http'
 require 'uri'
 require 'json'
-require 'pp'
+require 'yaml'
 
 class BitcoinRPC
   def initialize(service_url)
@@ -35,12 +35,9 @@ class BitcoinRPC
 end
 
 if $0 == __FILE__
+  config = YAML.load_file('config.yml')['bitcoind']
   # bitcoind REPL
-  user = 'bitcoinrpc'
-  pass = 'be3189b6-242e-49d5-af91-1c94463dd903'
-  host = '192.168.1.2'
-  port = 8332
-  rpc = BitcoinRPC.new("http://#{user}:#{pass}@#{host}:#{port}")
+  rpc = BitcoinRPC.new("http://#{config['user']}:#{config['password']}@#{config['host']}:#{config['port']}")
   while true
     print '> '
     command = gets.split.map do |arg|
@@ -62,8 +59,7 @@ if $0 == __FILE__
     if response.is_a? String
       puts response
     else
-      pp response
+      puts response.to_yaml
     end
   end
 end
-
