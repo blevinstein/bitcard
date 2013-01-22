@@ -12,7 +12,12 @@ class BitcoinRPC
     post_body = {:method => name,
                  :params => args,
                  :id => 'jsonrpc'}.to_json
-    resp = JSON.parse( http_post_request(post_body) )
+    begin
+      raw = http_post_request(post_body)
+      resp = JSON.parse(raw)
+    rescue JSON::ParserError
+      raise JSONRPCError, "Invalid JSON: \"#{raw}\""
+    end
     raise JSONRPCError, resp['error'] if resp['error']
     resp['result']
   end
@@ -33,7 +38,7 @@ if $0 == __FILE__
   # bitcoind REPL
   user = 'bitcoinrpc'
   pass = 'be3189b6-242e-49d5-af91-1c94463dd903'
-  host = '10.0.0.2'
+  host = '192.168.1.2'
   port = 8332
   rpc = BitcoinRPC.new("http://#{user}:#{pass}@#{host}:#{port}")
   while true
@@ -53,7 +58,12 @@ if $0 == __FILE__
       end
     end
     break if command.empty?
-    pp rpc.send(*command)
+    response = rpc.send(*command)
+    if response.is_a? String
+      puts response
+    else
+      pp response
+    end
   end
 end
 
