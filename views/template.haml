@@ -2,10 +2,10 @@
 %head
   %title Bitcard
   -# bootstrap
-  = stylesheet 'css/bootstrap.css'
+  = stylesheet '/css/bootstrap.css'
   -#= stylesheet 'css/bootstrap-responsive.css'
   -# local stylesheets
-  = stylesheet 'css/template.css'
+  = stylesheet '/css/template.css'
   = yield_content :head
 %body
   .container-fluid
@@ -13,7 +13,7 @@
       .span2.offset1
         .logo
           %a{:href=>'/'}
-            %img{:src=>'img/logo.png'}
+            %img{:src=>'/img/logo.png'}
       .span6
         .title
           %h1= yield_content :title
