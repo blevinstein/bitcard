@@ -1,24 +1,37 @@
 - require 'securerandom'
 
+-# TODO: allow deletion of Codes
+-# TODO: show recent transactions
+
 - content_for :head do
-  = stylesheet 'css/admin.css'
+  = stylesheet '/css/admin.css'
 - content_for :title do
   Admin Panel
 
 .row-fluid
   .span4.offset2.well
-    %h3 Receiving Addresses
-    - 5.times do
+    .row-fluid
+      %h3.span12 Unallocated Balance
+    .row-fluid
+      .span12.balance= "#{Code.unallocated} &#3647;"
+    .row-fluid
+      %h3.span12 Receiving Addresses
+    - Code.rpc.getaddressesbyaccount('unallocated').each do |address|
       .row-fluid
-        .span9= SecureRandom.uuid
-        .span3= "#{rand(1..10)}&#3647;"
+        .span12= address
+    .row-fluid
+      .span12
+        %form.form-inline{:method=>'post'}
+          %button.btn.btn-primary{:name=>'new_address'} Generate New Address
   .span4.well
-    %h3 Codes
-    - 4.times do
+    .row-fluid
+      %h3.span12 Codes
+    - Code.each do |code|
       .row-fluid
-        .span4= SecureRandom.uuid[0,8]
-        .span4= "#{rand(1..10)}&#3647;"
-        .span4= %w[ready printed sold].sample
-.row-fluid
-  .span4.offset2.well
-    = rpc.getbalance
+        .span8= code
+        .span4= "#{code.amount} &#3647;"
+    .row-fluid
+      .span12
+        %form.form-inline{:method=>'post'}
+          %input{:type=>'text',:name=>'amount',:placeholder=>'Amount'}
+          %button.btn.btn-primary{:name=>'new_code'} New Code

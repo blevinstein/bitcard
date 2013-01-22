@@ -20,8 +20,8 @@ class Bitcard < Sinatra::Base
   set :public_folder, 'public'
   set :raise_errors, false
   set :show_exceptions, true
-  enable :sessions, :logging
-  # TODO: Add logging messages
+  enable :logging
+  #TODO: add thorough logging messages
 
   set :haml, :layout => :template
   register Sinatra::Contrib
@@ -63,8 +63,9 @@ class Bitcard < Sinatra::Base
       @input = 'Address'
       return haml :index
     end
-    # if not valid address
-    # send bitcoins to address
+    # TODO: if not valid address
+    Code.rpc.sendfrom(code.to_s, @address, code.amount)
+    code.delete
     @hidden = []
     @input = 'Challenge'
     @message = 'Sent! Enter a new challenge to send more bitcoins.'
@@ -72,21 +73,20 @@ class Bitcard < Sinatra::Base
   end
   
   def require_admin
-    redirect '/login' unless session[:admin]
-    @admin = Admin.get(session[:admin])
-    fail if @admin.nil?
+    session = Session.get(params[:session])
+    redirect '/login' unless session
+    @admin = session.admin
   end
 
   get '/login' do
-    redirect '/admin' if session[:admin]
     haml :login
   end
 
   post '/login' do
     admin = Admin.get(params[:username])
     if admin && admin.password?(params[:password])
-      session[:admin] = admin.username
-      redirect '/admin'
+      session = Session.create(:admin => admin)
+      redirect "/admin/#{session.token}"
     else
       @flash = 'Incorrect username or password.'
       haml :login
@@ -94,15 +94,24 @@ class Bitcard < Sinatra::Base
   end
 
   get '/admin' do
+    redirect '/login'
+  end
+
+  get '/admin/:session' do
     require_admin
     haml :admin
   end
 
-  def rpc
-    @rpc ||= begin
-      s = settings.bitcoind
-      BitcoinRPC.new("http://#{s[:user]}:#{s[:password]}@#{s[:host]}:#{s[:port]}")
+  post '/admin/:session' do
+    require_admin
+    if params['new_address']
+      Code.rpc.getnewaddress('unallocated')
     end
+    if params['new_code']
+      amount = params['amount'].to_f
+      Code.generate(amount) if amount
+    end
+    haml :admin
   end
 
   run! if app_file == $0
