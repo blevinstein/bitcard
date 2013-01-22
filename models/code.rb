@@ -1,6 +1,8 @@
 class Code
   include DataMapper::Resource
 
-  property :redeem_code, String, :key => true
-  property :amount,      Integer
+  property :challenge, String, :key => true
+  property :response,  String
+  property :secret,    String
+  property :amount,    Float
 end

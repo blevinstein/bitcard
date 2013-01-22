@@ -1,23 +1,26 @@
 - content_for :head do
   = stylesheet 'css/index.css'
 - content_for :title do
-  = @title
+  Redeem Bitcards
 
 .row-fluid
-  .offset4.span4.well
-    %form.form{:method=>'post', :action=>@action.to_form}
-      .row-fluid
-        .span10.offset1.control-group{:class=>@status}
-          %label.control-label.message= @message || "&nbsp;"
-      .row-fluid
-        .span6.offset3
-          %button.btn.btn-primary.submit= @action.to_human
-      .row-fluid
-        .control-group{:class=>@status}
-          .input-append{:class=>@prepend ? 'input-prepend' : nil}
-            %span.add-on{:class=>@prepend ? nil : 'hidden'}= @prepend || "&nbsp;"
-            %input.span10.offset1#appendedInputButton{:type=>'text',
-              :name=>@input.to_form,
-              :placeholder=>@input.to_human}
-            %button.btn{:class=>"btn-#{@button}"}
-              %i{:class=>"icon-#{@icon}"}
+  .offset3.span6.well
+    .row-fluid
+      .span12
+        = @message || "&nbsp;"
+    .row-fluid
+      .span12
+        %span.challenge= @challenge || '_'*8
+        —
+        %span.response= @answer || '_'*8
+        —
+        %span.code= @secret || '_'*8
+        %i.icon-arrow-right
+        %span.amount= @amount || '_'*2+"\u0e3f"
+        %i.icon-arrow-right
+        %span.address= @address || '_'*34
+    %form.form-inline{:method=>'post'}
+      - (@hidden || []).each do |k|
+        %input{:type=>'hidden',:name=>k,:value=>params[k]}
+      %input{:type=>'text',:name=>@input.to_form,:placeholder=>@input.to_human}
+      %button.btn.btn-info Go

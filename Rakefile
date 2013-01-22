@@ -24,7 +24,7 @@ end
 
 namespace 'code' do
   desc 'Add a code to the database.'
-  task :add, :redeem_code, :amount do |t, args|
+  task :add, :challenge, :response, :secret, :amount do |t, args|
     print args
     Code.create args
   end
@@ -32,7 +32,7 @@ namespace 'code' do
   desc 'List all codes.'
   task :list do
     Code.each do |code|
-      puts "#{code.redeem_code}\t#{code.amount} BTC"
+      puts "#{code.challenge}-#{code.response}-#{code.secret}\t#{code.amount}\u0e3f"
     end
   end
 

@@ -27,38 +27,50 @@ class Bitcard < Sinatra::Base
   register Sinatra::Contrib
 
   get '/' do
-    @title = 'Redeem Bitcards'
-    @action = 'Redeem'
-    @input = 'Bitcard Code'
-    @button = 'success'
-    @icon = 'ok'
+    @input = 'Challenge'
     haml :index
   end
 
-  post '/redeem' do
-    @id = params['bitcard_code']
-    @code = Code.get(@id)
-    if @code
-      @title = 'Send Bitcoins'
-      @action = 'Send'
-      @input = 'Bitcoin Address'
-      @button = 'success'
-      @icon = 'share'
-      @status = 'success'
-      @message = 'Valid code!'
-      @prepend = "#{@code.amount} &#3647;"
-    else
-      @message = 'No such code.'
-      @title = 'Redeem Bitcards'
-      @action = 'Redeem'
-      @input = 'Bitcard Code'
-      @status = 'error'
-      @button = 'danger'
-      @icon = 'ok'
+  post '/' do
+    @hidden = []
+    @challenge = params['challenge']
+    if not @challenge
+      @input = 'Challenge'
+      return haml :index
     end
+    code = Code.get(params['challenge'])
+    if not code
+      @input = 'Challenge'
+      @message = 'Unrecognized challenge.'
+      return haml :index
+    end
+    @hidden << 'challenge'
+    @answer = code.response
+    @secret = params['secret']
+    if not @secret
+      @input = 'Secret'
+      return haml :index
+    end
+    if @secret != code.secret
+      @input = 'Secret'
+      @message = 'Invalid code.'
+      return haml :index
+    end
+    @hidden << 'secret'
+    @amount = code.amount
+    @address = params['address']
+    if not @address
+      @input = 'Address'
+      return haml :index
+    end
+    # if not valid address
+    # send bitcoins to address
+    @hidden = []
+    @input = 'Challenge'
+    @message = 'Sent! Enter a new challenge to send more bitcoins.'
     haml :index
   end
-
+  
   def require_admin
     redirect '/login' unless session[:admin]
     @admin = Admin.get(session[:admin])

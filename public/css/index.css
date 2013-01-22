@@ -1,8 +1,12 @@
-.submit {
-  margin-bottom: 15px;
-  width: 100%;
+.btn-group .btn {
+  float: none;
+  padding: 0px;
 }
 
-.message {
+.btn-group .btn:disabled {
+  margin-right: 1px;
+}
+
+.btn-group input {
   text-align: center;
 }
