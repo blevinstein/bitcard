@@ -1,7 +1,9 @@
 #!/bin/bash
 
-cd /home/dope/bitcard.git
-sudo -u bitcard ruby control.rb $1
-RETVAL=$?
+sudo -u dope -s -- <<EOF
+cd ~/bitcard.git
+export SINATRA_ENV=production
+ruby control.rb $1
+EOF
 
-exit $RETVAL
+exit $?

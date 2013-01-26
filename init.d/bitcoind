@@ -13,8 +13,7 @@ start() {
     echo "Error! $PROG is currently running" 1>&2
     exit 1
   else
-    HOME="/root"
-    $PROG_PATH/$PROG -daemon || exit 1
+    env HOME=/root $PROG_PATH/$PROG -daemon || exit 1
     echo "$PROG started"
     touch "$PID_PATH/$PROG.pid"
   fi

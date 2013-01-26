@@ -7,13 +7,14 @@ PROG="tor"
 PROG_PATH="/usr/local/bin"
 PID_PATH="/var/run"
 LOG_PATH="/var/log"
+CONF="/etc/tor/torrc"
 
 start() {
   if [ -e "$PID_PATH/$PROG.pid" ]; then
     echo "Error! $PROG is currently running" 1>&2
     exit 1
   else
-    $PROG_PATH/$PROG 2>&1 >$LOG_PATH/$PROG &
+    $PROG_PATH/$PROG -f $CONF 2>&1 >$LOG_PATH/$PROG &
     echo "$PROG started"
     touch "$PID_PATH/$PROG.pid"
   fi
