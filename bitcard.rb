@@ -19,9 +19,8 @@ class Bitcard < Sinatra::Base
   set :environment, $environment
   set :public_folder, 'public'
   set :raise_errors, false
-  set :show_exceptions, true
+  set :show_exceptions, settings.environment == :development
   enable :logging
-  #TODO: add thorough logging messages
 
   set :haml, :layout => :template
   register Sinatra::Contrib
@@ -40,6 +39,7 @@ class Bitcard < Sinatra::Base
     end
     code = Code.get(params['challenge'])
     if not code
+      logger.info "Bad challenge"
       @input = 'Challenge'
       @message = 'Unrecognized challenge.'
       return haml :index
@@ -52,6 +52,7 @@ class Bitcard < Sinatra::Base
       return haml :index
     end
     if @secret != code.secret
+      logger.info "Bad secret"
       @input = 'Secret'
       @message = 'Invalid code.'
       return haml :index
@@ -63,8 +64,9 @@ class Bitcard < Sinatra::Base
       @input = 'Address'
       return haml :index
     end
+    response = Code.rpc.sendfrom(code.to_s, @address, code.amount)
     # TODO: if not valid address
-    Code.rpc.sendfrom(code.to_s, @address, code.amount)
+    logger.info "Code redeemed #{code.to_s} Address #{@address}"
     code.delete
     @hidden = []
     @input = 'Challenge'
@@ -86,8 +88,10 @@ class Bitcard < Sinatra::Base
     admin = Admin.get(params[:username])
     if admin && admin.password?(params[:password])
       session = Session.create(:admin => admin)
+      logger.info "Admin #{admin.username} Session #{session.token}"
       redirect "/admin/#{session.token}"
     else
+      logger.info "Admin #{admin.username} Bad password"
       @flash = 'Incorrect username or password.'
       haml :login
     end
@@ -105,11 +109,14 @@ class Bitcard < Sinatra::Base
   post '/admin/:session' do
     require_admin
     if params['new_address']
-      Code.rpc.getnewaddress('unallocated')
+      response = Code.rpc.getnewaddress('unallocated')
+      # TODO: parse response
+      logger.info "New address"
     end
-    if params['new_code']
+    if params['new_code'] and params['amount']
       amount = params['amount'].to_f
-      Code.generate(amount) if amount
+      code = Code.generate(amount)
+      logger.info "New code #{code.to_s}"
     end
     haml :admin
   end

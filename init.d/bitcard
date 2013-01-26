@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd /home/dope/bitcard.git
+sudo -u bitcard ruby control.rb $1
+RETVAL=$?
+
+exit $RETVAL

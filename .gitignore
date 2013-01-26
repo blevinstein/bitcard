@@ -1,5 +1,6 @@
 .rvmrc
-db
 Gemfile.lock
+db
 log
 config.yml
+bitcard.pid

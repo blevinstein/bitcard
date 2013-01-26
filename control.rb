@@ -4,7 +4,7 @@
 require 'daemons'
 
 pwd = Dir.pwd
-Daemons.run_proc('bitcard.rb',:dir_mode=>:normal,:dir=>'/home/bitcard/pid') do
+Daemons.run_proc('bitcard') do
   Dir.chdir pwd
   exec "ruby bitcard.rb"
 end
