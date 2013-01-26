@@ -16,3 +16,5 @@ gem 'json'
 
 gem 'rerun'
 gem 'rb-fsevent'
+
+gem 'daemons'
