@@ -122,6 +122,10 @@ class Bitcard < Sinatra::Base
       logger.info "New code #{code.to_s}"
     end
     if params['import']
+      Code.each do |code|
+        code.destroy
+        logger.info "Dump code #{code.to_s}"
+      end
       Code.import.each do |code|
         logger.info "Import code #{code.to_s}"
       end
