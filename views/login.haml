@@ -5,6 +5,9 @@
 
 .row-fluid
   .span6.offset3.well
+    .row-fluid
+      .span12
+        = @message || "&nbsp;"
     %form.form-horizontal{:action=>'/login',:method=>'post'}
       .control-group
         %label.control-label Username

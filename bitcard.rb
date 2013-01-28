@@ -95,8 +95,8 @@ class Bitcard < Sinatra::Base
       logger.info "Admin #{admin.username} Session #{token}"
       redirect "/admin/#{token}"
     else
-      logger.info "Admin #{admin.username} Bad password"
-      @flash = 'Incorrect username or password.'
+      logger.info "Admin #{params[:username]} Bad password"
+      @message = 'Incorrect username or password.'
       haml :login
     end
   end

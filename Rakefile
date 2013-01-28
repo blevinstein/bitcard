@@ -1,23 +1,5 @@
 require './config.rb'
 
-namespace 'db' do
-  desc 'Update the database.'
-  task :update do
-    begin
-      DataMapper.auto_upgrade!
-      puts 'Updated!'
-    rescue Exception => e
-      puts e
-    end
-  end
-
-  desc 'Migrate the database.'
-  task :migrate do
-    DataMapper.auto_migrate!
-    puts 'Migrated!'
-  end
-end
-
 namespace 'admin' do
   desc "List all admins."
   task :list do
@@ -28,12 +10,8 @@ namespace 'admin' do
 
   desc "Add an admin account."
   task :add, :username, :password do |t, args|
-    begin
-      Admin.create(args)
-      puts 'Admin account created!'
-    rescue Exception => e
-      puts e
-    end
+    Admin.create(:username => args[:username], :password => args[:password])
+    puts 'Admin account created!'
   end
 end
 
