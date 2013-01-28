@@ -18,7 +18,7 @@ class BitcoinRPC
     rescue JSON::ParserError
       raise JSONRPCError, "Invalid JSON: \"#{raw}\""
     end
-    raise JSONRPCError, resp['error'] if resp['error']
+    raise JSONRPCError, resp['error']['message'] if resp['error']
     resp['result']
   end
 

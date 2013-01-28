@@ -1,7 +1,8 @@
 - require 'securerandom'
 
--# TODO: allow deletion of Codes (sending BTC back to unallocated)
--# TODO: show recent incoming/outgoing transactions
+-# TODO: show transactions log
+-# TODO: accounting
+-# TODO: print/check_out codes, update status
 
 - content_for :head do
   = stylesheet '/css/admin.css'
@@ -28,10 +29,20 @@
       %h3.span12 Codes
     - Code.each do |code|
       .row-fluid
-        .span8= code
-        .span4= "#{code.amount} &#3647;"
+        .span3= code.challenge
+        .span3= "#{code.amount} &#3647;"
+        .span3= code.status
+        .span3
+          %form.form-inline{:method=>'post'}
+            %input{:type=>'hidden',:name=>'code',:value=>code.challenge}
+            %button.btn.btn-danger{:name=>'destroy'}
+              %i.icon-remove
     .row-fluid
       .span12
         %form.form-inline{:method=>'post'}
           %input{:type=>'text',:name=>'amount',:placeholder=>'Amount'}
           %button.btn.btn-primary{:name=>'new_code'} New Code
+    .row-fluid
+      .span12
+        %form.form-inline{:method=>'post'}
+          %button.btn.btn-info{:name=>'import'} Import Codes

@@ -64,13 +64,17 @@ class Bitcard < Sinatra::Base
       @input = 'Address'
       return haml :index
     end
-    response = Code.rpc.sendfrom(code.to_s, @address, code.amount)
-    # TODO: if not valid address
-    logger.info "Code redeemed #{code.to_s} Address #{@address}"
-    code.delete
-    @hidden = []
-    @input = 'Challenge'
-    @message = 'Sent! Enter a new challenge to send more bitcoins.'
+    begin
+      response = Code.rpc.sendfrom(code.to_s, @address, code.amount)
+      logger.info "Code redeemed #{code.to_s} Address #{@address}"
+      code.delete
+      @hidden = []
+      @input = 'Challenge'
+      @message = 'Sent! Enter a new challenge to send more bitcoins.'
+    rescue BitcoinRPC::JSONRPCError => e
+      @input = 'Secret'
+      @message = e.to_s
+    end
     haml :index
   end
   
@@ -109,14 +113,23 @@ class Bitcard < Sinatra::Base
   post '/admin/:session' do
     require_admin
     if params['new_address']
-      response = Code.rpc.getnewaddress('unallocated')
-      # TODO: parse response
-      logger.info "New address"
+      Code.rpc.getnewaddress('unallocated')
+      logger.info "New receiving address"
     end
     if params['new_code'] and params['amount']
       amount = params['amount'].to_f
       code = Code.generate(amount)
       logger.info "New code #{code.to_s}"
+    end
+    if params['import']
+      Code.import.each do |code|
+        logger.info "Import code #{code.to_s}"
+      end
+    end
+    if params['destroy'] and params['code']
+      code = Code.get(params['code'])
+      code.liquify
+      logger.info "Liquify code #{code.to_s}"
     end
     haml :admin
   end

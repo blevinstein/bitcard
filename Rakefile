@@ -54,6 +54,13 @@ namespace 'code' do
     end
   end
 
+  desc 'Dump all codes.'
+  task :dump do
+    Code.each do |code|
+      code.destroy
+    end
+  end
+
   desc 'List all codes.'
   task :list do
     Code.each do |code|
