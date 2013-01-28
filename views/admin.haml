@@ -27,7 +27,7 @@
   .span4.well
     .row-fluid
       %h3.span12 Codes
-    - Code.each do |code|
+    - Code.all.each do |code|
       .row-fluid
         .span3= code.challenge
         .span3= "#{code.amount} &#3647;"

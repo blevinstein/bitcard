@@ -4,3 +4,7 @@ bitcoind:
   password: be3189b6-242e-49d5-af91-1c94463dd903
   host: 192.168.1.2
   port: 8332
+database:
+  adapter: 'sqlite3'
+  database: 'db'
+  pool: 25

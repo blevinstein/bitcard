@@ -1,8 +1,4 @@
 html, body, .container-fluid {
-  height: 100%;
-}
-
-.container-fluid {
   background: lightGray;
 }
 

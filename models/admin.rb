@@ -1,13 +1,11 @@
 require 'digest/sha1'
 
-class Admin
-  include DataMapper::Resource
+class Admin < ActiveRecord::Base
+  validates :username, :password_hash, :password_salt, :presence => true
+  validates :username, :uniqueness => true
+  validates :session_token, :uniqueness => true, :allow_nil => true
 
-  property :username,          String,  :key => true
-  property :password_hash,     String,  :required => true
-  property :password_salt,     String,  :required => true
-
-  has n, :session
+  has_many :sessions
 
   def password=(new_password)
     self.password_salt = Time.now.to_f.to_s + username
@@ -18,3 +16,13 @@ class Admin
     Digest::SHA1.hexdigest(given_password + password_salt) == password_hash
   end
 end
+
+ActiveRecord::Schema.define do
+  create_table :admins do |table|
+    table.column :username,      :string
+    table.column :password_hash, :string
+    table.column :password_salt, :string
+    table.column :session_token, :string
+  end
+  #add_index :admins, :username, :unique
+end unless Admin.table_exists?

@@ -1,5 +1,4 @@
 require './config.rb'
-require 'pp'
 
 namespace 'db' do
   desc 'Update the database.'
@@ -22,7 +21,7 @@ end
 namespace 'admin' do
   desc "List all admins."
   task :list do
-    Admin.each do |admin|
+    Admin.all.each do |admin|
       puts admin.username
     end
   end
@@ -30,11 +29,9 @@ namespace 'admin' do
   desc "Add an admin account."
   task :add, :username, :password do |t, args|
     begin
-      admin = Admin.new(args)
-      admin.save
+      Admin.create(args)
       puts 'Admin account created!'
     rescue Exception => e
-      puts admin.errors.inspect unless admin.nil? or admin.valid?
       puts e
     end
   end
@@ -56,14 +53,14 @@ namespace 'code' do
 
   desc 'Dump all codes.'
   task :dump do
-    Code.each do |code|
+    Code.all.each do |code|
       code.destroy
     end
   end
 
   desc 'List all codes.'
   task :list do
-    Code.each do |code|
+    Code.all.each do |code|
       puts "#{code.to_s}\t#{code.amount}\u0e3f"
     end
   end

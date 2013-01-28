@@ -5,10 +5,8 @@ gem 'sinatra-contrib'
 
 gem 'haml'
 
-gem 'data_mapper'
-gem 'dm-mysql-adapter'
-gem 'dm-sqlite-adapter'
-gem 'dm-migrations'
+gem 'activerecord'
+gem 'sqlite3'
 
 gem 'openpgp'
 

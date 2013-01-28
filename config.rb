@@ -1,12 +1,14 @@
-require 'data_mapper'
-require 'yaml'
+require 'active_record'
+require 'logger'
 
 $environment = (ENV['SINATRA_ENV'] || 'development').to_sym
 
-DataMapper::Model.raise_on_save_failure = true
-DataMapper.setup :default, ENV['DATABASE_URL'] || "sqlite://#{Dir.pwd}/db"
-Dir['./models/*'].each { |model| require model }
-DataMapper.finalize
+config = YAML.load_file('config.yml')
+
+ActiveRecord::Base.logger = Logger.new(STDERR)
+ActiveRecord::Base.establish_connection(config['database'])
+Dir["#{Dir.pwd}/models/*.rb"].each { |model| require model }
+Code.config_rpc(config['bitcoind'])
 
 log = File.open(ENV['LOG_FILE'] || "#{Dir.pwd}/log",'a+')
 log.sync = true

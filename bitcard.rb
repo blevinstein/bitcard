@@ -6,11 +6,10 @@ require 'logger'
 
 require 'haml'
 require 'json'
-require 'pp'
 
 require './string.rb'
-require './config.rb'
 require './bitcoin_rpc.rb'
+require './config.rb'
 
 class Bitcard < Sinatra::Base
   register Sinatra::ConfigFile
@@ -37,7 +36,7 @@ class Bitcard < Sinatra::Base
       @input = 'Challenge'
       return haml :index
     end
-    code = Code.get(params['challenge'])
+    code = Code.find_by_challenge(params['challenge'])
     if not code
       logger.info "Bad challenge"
       @input = 'Challenge'
@@ -67,7 +66,7 @@ class Bitcard < Sinatra::Base
     begin
       response = Code.rpc.sendfrom(code.to_s, @address, code.amount)
       logger.info "Code redeemed #{code.to_s} Address #{@address}"
-      code.delete
+      code.destroy
       @hidden = []
       @input = 'Challenge'
       @message = 'Sent! Enter a new challenge to send more bitcoins.'
@@ -79,9 +78,8 @@ class Bitcard < Sinatra::Base
   end
   
   def require_admin
-    session = Session.get(params[:session])
-    redirect '/login' unless session
-    @admin = session.admin
+    @admin = Admin.find_by_session_token(params[:session])
+    redirect '/login' unless @admin
   end
 
   get '/login' do
@@ -89,11 +87,13 @@ class Bitcard < Sinatra::Base
   end
 
   post '/login' do
-    admin = Admin.get(params[:username])
+    admin = Admin.find_by_username(params[:username])
     if admin && admin.password?(params[:password])
-      session = Session.create(:admin => admin)
-      logger.info "Admin #{admin.username} Session #{session.token}"
-      redirect "/admin/#{session.token}"
+      token = SecureRandom.uuid
+      admin.session_token = token
+      admin.save
+      logger.info "Admin #{admin.username} Session #{token}"
+      redirect "/admin/#{token}"
     else
       logger.info "Admin #{admin.username} Bad password"
       @flash = 'Incorrect username or password.'
@@ -122,7 +122,7 @@ class Bitcard < Sinatra::Base
       logger.info "New code #{code.to_s}"
     end
     if params['import']
-      Code.each do |code|
+      Code.all.each do |code|
         code.destroy
         logger.info "Dump code #{code.to_s}"
       end
@@ -131,7 +131,7 @@ class Bitcard < Sinatra::Base
       end
     end
     if params['destroy'] and params['code']
-      code = Code.get(params['code'])
+      code = Code.find_by_challenge(params['code'])
       code.liquify
       logger.info "Liquify code #{code.to_s}"
     end
