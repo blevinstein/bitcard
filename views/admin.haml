@@ -29,10 +29,10 @@
       %h3.span12 Codes
     - Code.all.each do |code|
       .row-fluid
-        .span3= code.challenge
-        .span3= "#{code.amount} &#3647;"
-        .span3= code.status
-        .span3
+        .span6= code.to_s
+        .span2= "#{code.amount} &#3647;"
+        .span2= code.status
+        .span2
           %form.form-inline{:method=>'post'}
             %input{:type=>'hidden',:name=>'code',:value=>code.challenge}
             %button.btn.btn-danger{:name=>'destroy'}
